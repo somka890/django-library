@@ -2,7 +2,7 @@
 
 This is a simple **Django-based library system** that allows users to browse books, see details, register/login, and manage personal reading status.  
 
-🚀 Live Demo: [Open App]([https://knygu-katalogas.onrender.com](https://django-library-k71m.onrender.com))  
+🚀 Live Demo: [Open App](https://django-library-k71m.onrender.com)  
 
 ---
 
@@ -32,7 +32,7 @@ Procfile           # Render deployment config
 
 ---
 
-⚡ How to Run Locally
+##⚡ How to Run Locally
 # Clone repository
 git clone https://github.com/somka890/django-library.git
 cd django-library/core
