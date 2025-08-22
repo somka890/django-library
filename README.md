@@ -2,7 +2,7 @@
 
 This is a simple **Django-based library system** that allows users to browse books, see details, register/login, and manage personal reading status.  
 
-🚀 Live Demo: [Open App](https://knygu-katalogas.onrender.com)  
+🚀 Live Demo: [Open App]([https://knygu-katalogas.onrender.com](https://django-library-k71m.onrender.com))  
 
 ---
 
