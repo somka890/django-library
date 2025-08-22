@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Knygų katalogas{% endblock %}</title>
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'libraryapp/style.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+  <!-- ##### header ##### -->
+  <header class="site-header">
+
+    <h1 class="logo">
+      <a href="{% url 'libraryapp:book_list' %}">📚 Knygų katalogas</a>
+    </h1>
+
+    <!-- ##### navigation ##### -->
+    <nav class="auth-nav">
+      {% if user.is_authenticated %}
+        <span class="hello">Sveikas, {{ user.username }}!</span>
+        <form action="{% url 'libraryapp:logout' %}" method="post" class="logout-form">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-small btn-secondary">Atsijungti</button>
+        </form>
+      {% else %}
+        <a href="{% url 'libraryapp:login' %}" class="btn btn-small">Prisijungti</a>
+        <a href="{% url 'libraryapp:register' %}" class="btn btn-small btn-secondary">Registruotis</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- ##### content ##### -->
+  <main class="container">
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="msg {{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ##### footer ##### -->
+  <footer class="site-footer">
+    <p>&copy; {% now "Y" %} Knygų sistema</p>
+  </footer>
+
+</body>
+</html>

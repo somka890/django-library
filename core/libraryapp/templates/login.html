@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Prisijungimas{% endblock %}
+
+{% block content %}
+
+<div class="login-container">
+  <div class="login-box">
+    <h2>Prisijungimas</h2>
+
+    <form method="post" class="form">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="form-row">
+        <label for="id_username">Vartotojo vardas</label>
+        {{ form.username }}
+      </div>
+
+      <div class="form-row">
+        <label for="id_password">Slaptažodis</label>
+        {{ form.password }}
+      </div>
+
+      <button type="submit" class="btn">Prisijungti</button>
+    </form>
+
+    <p><a href="{% url 'libraryapp:password_reset' %}">Pamiršai slaptažodį?</a></p>
+  </div>
+</div>
+{% endblock %}

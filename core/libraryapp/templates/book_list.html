@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Knygų katalogas{% endblock %}
+
+{% block content %}
+<div class="layout">
+
+  <!-- ##### sidebar filters ##### -->
+  <aside class="sidebar box">
+    <h3>Filtrai</h3>
+    <form method="get" class="filter">
+
+      <label>
+        Pavadinimas
+        <input type="text" name="title" value="{{ current.title }}">
+      </label>
+
+      <label>
+        Autorius
+        <input type="text" name="author" value="{{ current.author }}">
+      </label>
+
+      <label>
+        Žanras
+        <select name="genre">
+          <option value="">— visi —</option>
+          {% for g in genres %}
+            <option value="{{ g.id }}" {% if current.genre and g.id|stringformat:"s" == current.genre %}selected{% endif %}>
+              {{ g.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        Metai nuo
+        <input type="number" name="year_from" value="{{ current.year_from }}">
+      </label>
+
+      <label>
+        Iki
+        <input type="number" name="year_to" value="{{ current.year_to }}">
+      </label>
+
+      <label>
+        Rikiuoti pagal
+        <select name="order">
+          <option value="title" {% if current.order == 'title' %}selected{% endif %}>pavadinimą</option>
+          <option value="year" {% if current.order == 'year' %}selected{% endif %}>metus</option>
+        </select>
+      </label>
+
+      <button class="btn" type="submit">Filtruoti</button>
+      <a class="btn btn-secondary" href="{% url 'libraryapp:book_list' %}">Išvalyti</a>
+    </form>
+  </aside>
+
+  <!-- ##### book list ##### -->
+  <section class="book-list box">
+    <h2>Knygų katalogas</h2>
+
+    {% if books %}
+      <div class="books">
+        {% for b in books %}
+          <div class="book-card">
+            {% if b.cover %}
+              <div class="cover">
+                <img src="{{ b.cover.url }}" alt="{{ b.title }}">
+              </div>
+            {% endif %}
+
+            <div class="card-body">
+              <h3><a href="{% url 'libraryapp:book_detail' b.pk %}">{{ b.title }}</a></h3>
+              <p class="muted">{{ b.author.name }}{% if b.year %}, {{ b.year }}{% endif %}</p>
+
+              <div class="stars-display">
+                {% with rating=b.avg_rating|default:0 %}
+                  {% for i in "12345" %}
+                    {% if rating >= forloop.counter %}
+                      <span class="star full">★</span>
+                    {% elif rating >= forloop.counter0|add:"0.5" %}
+                      <span class="star half">★</span>
+                    {% else %}
+                      <span class="star empty">★</span>
+                    {% endif %}
+                  {% endfor %}
+                  <span class="rating-number">
+                    {% if b.avg_rating %}({{ b.avg_rating|floatformat:1 }}){% endif %}
+                  </span>
+                {% endwith %}
+              </div>
+
+              <a class="btn btn-small" href="{% url 'libraryapp:book_detail' b.pk %}">Peržiūrėti</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty">Nieko nerasta.</p>
+    {% endif %}
+
+    <!-- ##### pagination ##### -->
+    {% if is_paginated %}
+      <div class="pagination">
+        <ul class="pagination-list">
+          {% if page_obj.has_previous %}
+            <li><a href="?page=1" class="page-link">« Į pradžią</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}" class="page-link">‹ Atgal</a></li>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+              <li><span class="page-link active">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <li><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}" class="page-link">Kitas ›</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Paskutinis »</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<article class="detail">
+
+  <!-- ##### book layout ##### -->
+  <div class="book-layout">
+
+    <div class="left-side">
+      {% if book.cover %}
+      <div class="cover">
+        <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+      </div>
+      {% endif %}
+
+      <div class="meta">
+        <p><strong>Autorius:</strong> {{ book.author.name }}</p>
+        {% if book.year %}<p><strong>Išleidimo metai:</strong> {{ book.year }}</p>{% endif %}
+        <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+
+        <div class="genre-box">
+          <strong>Žanrai:</strong>
+          <div class="genres">
+            {% for g in book.genres.all %}
+            <span class="genre">{{ g.name }}</span>
+            {% empty %}
+            <span class="muted">Nėra</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <p><strong>Vid. įvertinimas:</strong> {{ book.avg_rating|default:"–"|floatformat:2 }}</p>
+
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'libraryapp:mark_as_read' book.pk %}">
+          {% csrf_token %}
+          <button class="btn" type="submit">
+            {% if has_read %}
+            ✅ Pažymėta kaip perskaityta
+            {% else %}
+            Pažymėti kaip perskaitytą
+            {% endif %}
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="right-side">
+      <h1>{{ book.title }}</h1>
+      <section class="description">
+        <h2>Aprašymas</h2>
+        <p>{{ book.description|linebreaks }}</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- ##### rating form ##### -->
+  <section class="rate">
+    <h2>Įvertinkite</h2>
+    {% if user.is_authenticated %}
+      {% if has_read %}
+        <form method="post" action="{% url 'libraryapp:rate_book' book.pk %}">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+
+          <div class="rating">
+            <input type="radio" id="star5" name="stars" value="5" {% if user_rating and user_rating.stars == 5 %}checked{% endif %}>
+            <label for="star5">★</label>
+            <input type="radio" id="star4" name="stars" value="4" {% if user_rating and user_rating.stars == 4 %}checked{% endif %}>
+            <label for="star4">★</label>
+            <input type="radio" id="star3" name="stars" value="3" {% if user_rating and user_rating.stars == 3 %}checked{% endif %}>
+            <label for="star3">★</label>
+            <input type="radio" id="star2" name="stars" value="2" {% if user_rating and user_rating.stars == 2 %}checked{% endif %}>
+            <label for="star2">★</label>
+            <input type="radio" id="star1" name="stars" value="1" {% if user_rating and user_rating.stars == 1 %}checked{% endif %}>
+            <label for="star1">★</label>
+          </div>
+
+          <button class="btn" type="submit">
+            {% if user_rating %} Atnaujinti {% else %} Pateikti {% endif %}
+            įvertinimą
+          </button>
+        </form>
+
+        {% if user_rating %}
+        <p class="muted">Jūsų dabartinis įvertinimas: {{ user_rating.stars }} ★</p>
+        {% endif %}
+
+      {% else %}
+        <p class="muted">Norint įvertinti, pirmiausia reikia pažymėti knygą kaip perskaitytą.</p>
+      {% endif %}
+    {% else %}
+      <p>
+        Norint įvertinti,
+        <a href="{% url 'login' %}?next={% url 'libraryapp:book_detail' book.pk %}">prisijunkite</a>.
+      </p>
+    {% endif %}
+  </section>
+
+  <section class="ratings">
+    <h3>Vartotojų įvertinimai</h3>
+    <ul>
+      {% for r in book.ratings.all %}
+      <li>
+        {{ r.user.username }}: {{ r.stars }} ★
+        <span class="muted">· {{ r.created_at|date:"Y-m-d H:i" }}</span>
+      </li>
+      {% empty %}
+      <li>Nėra įvertinimų.</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <p>
+    <a class="btn btn-secondary" href="{% url 'libraryapp:book_list' %}">← Grįžti į sąrašą</a>
+  </p>
+
+</article>
+{% endblock %}

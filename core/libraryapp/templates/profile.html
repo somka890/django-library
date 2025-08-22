@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Mano profilis{% endblock %}
+
+{% block content %}
+<div class="layout">
+
+  <!-- ##### sidebar filters ##### -->
+  <aside class="sidebar">
+    <h3>Filtrai</h3>
+    <form method="get" class="filter">
+      <label>
+        Pasirinkite statusą
+        <select name="status" onchange="this.form.submit()">
+          <option value="read" {% if filter_status == "read" %}selected{% endif %}>Perskaitytos</option>
+          <option value="reading" {% if filter_status == "reading" %}selected{% endif %}>Skaitomos dabar</option>
+          <option value="want" {% if filter_status == "want" %}selected{% endif %}>Norimos perskaityti</option>
+        </select>
+      </label>
+    </form>
+
+    <div class="stats">
+      <p><strong>Perskaityta:</strong> {{ read_count }}</p>
+      <p><strong>Įvertinta:</strong> {{ rated_count }}</p>
+    </div>
+  </aside>
+
+  <!-- ##### profile content ##### -->
+  <section class="content">
+    <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+    <p class="muted">
+      Vartotojas: {{ request.user.username }} <br>
+      {% if request.user.profile.birth_year %} Gimimo metai: {{ request.user.profile.birth_year }} <br>{% endif %}
+      {% if request.user.profile.city %} Miestas: {{ request.user.profile.city }}{% endif %}
+    </p>
+
+    <h3>
+      {% if filter_status == "read" %}Perskaitytos knygos{% endif %}
+      {% if filter_status == "reading" %}Skaitomos dabar{% endif %}
+      {% if filter_status == "want" %}Norimos perskaityti{% endif %}
+    </h3>
+
+    <div class="grid">
+      {% for status in books_status %}
+        <div class="card">
+          {% if status.book.cover %}
+            <div class="cover">
+              <img src="{{ status.book.cover.url }}" alt="{{ status.book.title }}">
+            </div>
+          {% endif %}
+          <h3><a href="{% url 'libraryapp:book_detail' status.book.pk %}">{{ status.book.title }}</a></h3>
+          <p class="muted">{{ status.book.author.name }}</p>
+          {% if status.book.year %}<p>{{ status.book.year }}</p>{% endif %}
+          <a class="btn btn-small" href="{% url 'libraryapp:book_detail' status.book.pk %}">Peržiūrėti</a>
+        </div>
+      {% empty %}
+        <p>Nėra knygų šioje kategorijoje.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
