@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Registracija{% endblock %}
+
+{% block content %}
+<div class="login-container">
+  <div class="login-box">
+    <h2>Registracija</h2>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {# Bendros klaidos (pvz. slaptažodžiai nesutampa) #}
+      {% if form.non_field_errors %}
+        <div class="error-messages">
+          {% for error in form.non_field_errors %}
+            <p style="color: red;">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-row">
+        <label for="id_username">Vartotojo vardas</label>
+        {{ form.username }}
+        {% for error in form.username.errors %}
+          <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="id_first_name">Vardas</label>
+        {{ form.first_name }}
+        {% for error in form.first_name.errors %}
+          <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="id_last_name">Pavardė</label>
+        {{ form.last_name }}
+        {% for error in form.last_name.errors %}
+          <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="id_birth_year">Gimimo metai</label>
+        {{ form.birth_year }}
+        {% for error in form.birth_year.errors %}
+          <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="id_city">Miestas</label>
+        {{ form.city }}
+        {% for error in form.city.errors %}
+          <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="id_password1">Slaptažodis</label>
+        {{ form.password1 }}
+        <small>{{ form.password1.help_text }}</small>
+        {% for error in form.password1.errors %}
+          <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="id_password2">Pakartoti slaptažodį</label>
+        {{ form.password2 }}
+        <small>{{ form.password2.help_text }}</small>
+        {% for error in form.password2.errors %}
+          <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn">Registruotis</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
